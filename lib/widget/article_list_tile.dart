@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:wandroid_app_flutter/model/bean/article_bean.dart';
 import 'package:wandroid_app_flutter/resource/a_colors.dart';
 import 'package:wandroid_app_flutter/resource/dimens.dart';
@@ -30,7 +31,10 @@ class ArticleListTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(bean.title, style: primaryTextStyle, maxLines: 2,),
+              Html(
+                data: bean.title,
+                defaultTextStyle: primaryTextStyle,
+              ),
               Row(
                 children: <Widget>[
                   Text(author, style: secondaryTextStyle,),

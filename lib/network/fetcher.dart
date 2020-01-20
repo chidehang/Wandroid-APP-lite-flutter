@@ -9,7 +9,7 @@ import 'dart:async';
 
 class Fetcher<T> {
 
-  /// 获取首页banner数据
+  /// 首页banner数据
   static Future<List<BannerBean>> fetchHomeBanners() async {
     final api = "banner/json";
     Response<String> resp = await HttpManager.getInstance().client.get(api);
@@ -23,6 +23,7 @@ class Fetcher<T> {
     return parsed.map<BannerBean>((json) => BannerBean.fromJson(json)).toList();
   }
 
+  /// 首页文章列表
   static Future<List<ArticleBean>> fetchHomeArticles(int page) async {
     final api = "article/list/$page/json";
     Response<String> resp = await HttpManager.getInstance().client.get(api);

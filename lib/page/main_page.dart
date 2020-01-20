@@ -21,9 +21,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   int _selectedIndex = 0;
   List<_Tab> _tabs;
+  var pages;
 
   static double top = 0;
-  
+
   @override
   void initState() {
     super.initState();
@@ -35,23 +36,26 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           title: Strings.main_tab_home,
           icon: Image.asset("res/images/tab_home_normal.png", width: iconSize, height: iconSize,),
           activeIcon: Image.asset("res/images/tab_home_selected.png", width: iconSize, height: iconSize),
-          child: HomePage(),
           vsync: this
         ),
         _Tab(
           title: Strings.main_tab_category,
           icon: Image.asset("res/images/tab_category_normal.png", width: iconSize, height: iconSize),
           activeIcon: Image.asset("res/images/tab_category_selected.png", width: iconSize, height: iconSize),
-          child: CategoryPage(),
           vsync: this
         ),
         _Tab(
           title: Strings.main_tab_mine,
           icon: Image.asset("res/images/tab_mine_normal.png", width: iconSize, height: iconSize),
           activeIcon: Image.asset("res/images/tab_mine_selected.png", width: iconSize, height: iconSize),
-          child: MinePage(),
           vsync: this
         )
+      ];
+
+      pages = <Widget>[
+        HomePage(),
+        CategoryPage(),
+        MinePage(),
       ];
     }
     _tabs[_selectedIndex].animationController.value = 1;
@@ -70,8 +74,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         preferredSize: Size.fromHeight(MediaQueryData.fromWindow(window).padding.top),
         child: SafeArea(top: true, child: Offstage()),
       ),
-      body: Center(
-        child: _buildTransitionStack(),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: true,
@@ -82,30 +87,11 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         unselectedFontSize: textTheme.caption.fontSize - 2,
         onTap: (index) {
           setState(() {
-            _tabs[_selectedIndex].animationController.reverse();
             _selectedIndex = index;
-            _tabs[_selectedIndex].animationController.forward();
           });
         },
       ),
     );
-  }
-
-  Widget _buildTransitionStack() {
-    final List<FadeTransition> transtions = <FadeTransition>[];
-    for (_Tab tab in _tabs) {
-      transtions.add(tab.buildTransition(context));
-    }
-
-    transtions.sort((a, b) {
-      final aAnimation = a.opacity;
-      final bAnimation = b.opacity;
-      final aValue = aAnimation.value;
-      final bValue = bAnimation.value;
-      return aValue.compareTo(bValue);
-    });
-
-    return Stack(children: transtions);
   }
 
   @override

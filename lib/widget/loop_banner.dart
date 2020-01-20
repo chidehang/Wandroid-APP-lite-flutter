@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 
+/// banner点击回调
+typedef BannerTapCallback = void Function(int index);
+
 /// 轮播banner
 class LoopBanner extends StatefulWidget {
 
   final List<String> _images;
   final double aspectRatio;
-  final GestureTapCallback onTap;
+  final BannerTapCallback onTap;
   final Curve curve;
   final Widget selectedIndicator;
   final Widget unselectIndicator;
@@ -65,7 +68,9 @@ class _LoopBannerState extends State<LoopBanner> {
             onPanDown: (details) {
               _cancelTimer(true);
             },
-            onTap: widget.onTap,
+            onTap: () {
+              widget.onTap(_curIndex % widget._images.length);
+            },
           );
         },
         controller: _pageController,
