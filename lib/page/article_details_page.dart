@@ -35,7 +35,8 @@ class _ArticleDetailsPageState extends State<ArticleDetailsPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.arguments.title, maxLines: 1,)
+          title: Text(widget.arguments.title, maxLines: 1,),
+          brightness: Brightness.light,
         ),
         body: browser,
       ),

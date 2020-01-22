@@ -2,10 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:wandroid_app_flutter/model/bean/article_bean.dart';
 import 'package:wandroid_app_flutter/model/bean/banner_bean.dart';
+import 'package:wandroid_app_flutter/model/bean/category_bean.dart';
 import 'package:wandroid_app_flutter/network/api_exception.dart';
 import 'package:wandroid_app_flutter/network/http_manager.dart';
 import 'dart:convert';
 import 'dart:async';
+
+import 'package:wandroid_app_flutter/util/pair.dart';
+
 
 class Fetcher<T> {
 
@@ -35,6 +39,35 @@ class Fetcher<T> {
     checkResult(result);
     final parsed = result["data"]["datas"].cast<Map<String, dynamic>>();
     return parsed.map<ArticleBean>((json) => ArticleBean.fromJson(json)).toList();
+  }
+
+  /// 全部体系分类
+  static Future<List<CategoryBean>> fetchCategoryTree() async {
+    final api = "tree/json";
+    Response<String> resp = await HttpManager.getInstance().client.get(api);
+    return compute(parseCategoryTree, resp.data);
+  }
+
+  static List<CategoryBean> parseCategoryTree(String source) {
+    final result = json.decode(source);
+    checkResult(result);
+    final parsed = result["data"].cast<Map<String, dynamic>>();
+    return parsed.map<CategoryBean>((json) => CategoryBean.fromJson(json)).toList();
+  }
+
+  /// 体系下文章列表
+  static Future<Pair<List<ArticleBean>, bool>> fetchCategoryArticles(int page, int cid) async {
+    final api = "article/list/$page/json";
+    Response<String> resp = await HttpManager.getInstance().client.get(api, queryParameters: {"cid": cid});
+    return compute(parseCategoryArticles, resp.data);
+  }
+
+  static Pair<List<ArticleBean>, bool> parseCategoryArticles(String source) {
+    final result = json.decode(source);
+    checkResult(result);
+    final parsed = result["data"]["datas"].cast<Map<String, dynamic>>();
+    Pair<List<ArticleBean>, bool> pair = Pair(parsed.map<ArticleBean>((json) => ArticleBean.fromJson(json)).toList(), result["data"]["over"]);
+    return pair;
   }
 
   /// 检查接口返回数据是否错误

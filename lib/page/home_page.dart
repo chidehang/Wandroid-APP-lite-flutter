@@ -27,6 +27,9 @@ class _HomePageState extends State<HomePage> {
 
   List<BannerBean> _bannerList = List();
 
+  /// 是否初始加载
+  bool _initial;
+
   /// 分页列表页码
   int _page = 0;
   /// 是否加载中
@@ -40,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _initial = true;
     _loadFreshBanners();
     _loadFreshArticles();
     _scrollController.addListener(() {
@@ -51,6 +55,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // 初始加载时显示菊花
+    if (_initial) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    // 初始加载结束后显示真正布局
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: CustomScrollView(
@@ -187,6 +199,12 @@ class _HomePageState extends State<HomePage> {
     }).catchError((e) {
       Fluttertoast.showToast(msg: "$e");
       debugPrint("$e");
+    }).whenComplete(() {
+      if (_initial) {
+        setState(() {
+          _initial = false;
+        });
+      }
     });
     return f;
   }
