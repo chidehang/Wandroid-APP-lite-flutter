@@ -7,6 +7,7 @@ import 'package:wandroid_app_flutter/page/article_details_page.dart';
 import 'package:wandroid_app_flutter/resource/dimens.dart';
 import 'package:wandroid_app_flutter/resource/selector.dart';
 import 'package:wandroid_app_flutter/resource/strings.dart';
+import 'package:wandroid_app_flutter/util/page_launcher.dart';
 import 'package:wandroid_app_flutter/widget/article_list_tile.dart';
 import 'package:wandroid_app_flutter/widget/dot.dart';
 import 'package:wandroid_app_flutter/widget/empty_data_tips.dart';
@@ -127,7 +128,7 @@ class _HomePageState extends State<HomePage> {
           unselectIndicator: unselectedDot,
           onTap: (index) {
             BannerBean bean = _bannerList[index];
-            _openArticleDetails(bean.title, bean.url);
+            PageLauncher.openArticleDetails(context, bean.title, bean.url);
           },
         ),
       ),
@@ -160,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                 return GestureDetector(
                   child: ArticleListTile(bean),
                   onTap: () {
-                    _openArticleDetails(bean.title, bean.link);
+                    PageLauncher.openArticleDetails(context, bean.title, bean.link);
                   },
                 );
               },
@@ -234,16 +235,6 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
       });
     }
-  }
-
-  /// 打开文章详情
-  void _openArticleDetails(String title, String url) async {
-    final result = await Navigator.push(context,
-      MaterialPageRoute(builder: (context) {
-        var args = ArticleArguments(title, url);
-        return ArticleDetailsPage(args);
-      })
-    );
   }
 
   @override

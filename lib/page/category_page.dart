@@ -26,10 +26,18 @@ class _CategoryPageState extends State<CategoryPage> with TickerProviderStateMix
 
   bool _isLoading = false;
 
+  int _curTabIndex = 0;
+
   @override
   void initState() {
     super.initState();
     _loadAllCategoryTree();
+  }
+
+  @override
+  void didUpdateWidget(CategoryPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    debugPrint("_CategoryPageState didUpdateWidget");
   }
 
   @override
@@ -83,7 +91,8 @@ class _CategoryPageState extends State<CategoryPage> with TickerProviderStateMix
 
   /// 二级体系视图
   Widget _buildTwoLevelTabs(List<CategoryBean> data) {
-    _twoTabController = TabController(length: data.length, vsync: this);
+    _twoTabController = TabController(length: data.length, vsync: this, initialIndex: _curTabIndex);
+    _twoTabController.addListener(_onTwoLevelTabChanged);
 
     return TabBar(
       isScrollable: true,
@@ -115,9 +124,14 @@ class _CategoryPageState extends State<CategoryPage> with TickerProviderStateMix
     if (_oneTabController.indexIsChanging && this.mounted) {
       setState(() {
         // 切换一级tab时，重置二级tab，避免出现索引对应不上
+        _curTabIndex = 0;
         _twoTabController.index = 0;
       });
     }
+  }
+
+  _onTwoLevelTabChanged() {
+    _curTabIndex = _twoTabController.index;
   }
 
   /// 获取全部体系分类

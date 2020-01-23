@@ -3,6 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wandroid_app_flutter/model/bean/article_bean.dart';
 import 'package:wandroid_app_flutter/network/fetcher.dart';
 import 'package:wandroid_app_flutter/resource/strings.dart';
+import 'package:wandroid_app_flutter/util/page_launcher.dart';
 import 'package:wandroid_app_flutter/util/pair.dart';
 import 'package:wandroid_app_flutter/widget/article_list_tile.dart';
 import 'package:wandroid_app_flutter/widget/empty_data_tips.dart';
@@ -30,19 +31,15 @@ class CategoryContentPageState extends State<CategoryContentPage> with Automatic
   ScrollController _scrollController = ScrollController();
 
   /// 初次加载
-  bool _isInitialLoad;
+  bool _isInitialLoad = true;
   /// 正在加载更多
-  bool _isLoadingMore;
+  bool _isLoadingMore = false;
   /// 有更多数据
-  bool _hasMore;
+  bool _hasMore = true;
 
   @override
   void initState() {
     super.initState();
-    _isInitialLoad = true;
-    _isLoadingMore = false;
-    _hasMore = true;
-
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         _loadMoreData();
@@ -54,6 +51,7 @@ class CategoryContentPageState extends State<CategoryContentPage> with Automatic
   @override
   void didUpdateWidget(CategoryContentPage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // 当widget更新时，刷新列表数据
     _retryInitial();
   }
 
@@ -78,7 +76,13 @@ class CategoryContentPageState extends State<CategoryContentPage> with Automatic
                   return LoadMoreTips();
                 }
 
-                return ArticleListTile(_articleList[index]);
+                final ArticleBean bean = _articleList[index];
+                return GestureDetector(
+                  child: ArticleListTile(bean),
+                  onTap: () {
+                    PageLauncher.openArticleDetails(context, bean.title, bean.link);
+                  },
+                );
               },
               itemCount: _hasMore? _articleList.length + 1 : _articleList.length,
             ),
