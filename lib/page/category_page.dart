@@ -67,10 +67,9 @@ class _CategoryPageState extends State<CategoryPage> with TickerProviderStateMix
   Widget _buildOneLevelTabs(List<CategoryBean> data) {
     if (_oneTabController == null) {
       _oneTabController = TabController(length: data.length, vsync: this);
-      _oneTabController.addListener(() {
-        _onOneLevelTabChanged();
-      });
+      _oneTabController.addListener(_onOneLevelTabChanged);
     }
+
     return TabBar(
       isScrollable: true,
       controller: _oneTabController,
@@ -85,6 +84,7 @@ class _CategoryPageState extends State<CategoryPage> with TickerProviderStateMix
   /// 二级体系视图
   Widget _buildTwoLevelTabs(List<CategoryBean> data) {
     _twoTabController = TabController(length: data.length, vsync: this);
+
     return TabBar(
       isScrollable: true,
       controller: _twoTabController,
@@ -96,7 +96,7 @@ class _CategoryPageState extends State<CategoryPage> with TickerProviderStateMix
     );
   }
 
-  /// 体系分类内容
+  /// 分类下内容
   Widget _buildTabView(List<CategoryBean> data) {
     final view = Expanded(
       child: TabBarView(

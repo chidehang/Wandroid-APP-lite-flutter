@@ -12,29 +12,37 @@ import 'package:wandroid_app_flutter/widget/load_more_tips.dart';
 class CategoryContentPage extends StatefulWidget {
 
   /// 体系ID
-  final int categoryId;
+  int categoryId;
 
-  CategoryContentPage(this.categoryId);
+  CategoryContentPage(this.categoryId, {Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _CategoryContentPageState();
+    return CategoryContentPageState();
   }
 }
 
-class _CategoryContentPageState extends State<CategoryContentPage> {
+class CategoryContentPageState extends State<CategoryContentPage> with AutomaticKeepAliveClientMixin{
 
   int _page = 0;
   List<ArticleBean> _articleList = List();
 
   ScrollController _scrollController = ScrollController();
 
-  bool _isLoading = false;
-  bool _hasMore = false;
+  /// 初次加载
+  bool _isInitialLoad;
+  /// 正在加载更多
+  bool _isLoadingMore;
+  /// 有更多数据
+  bool _hasMore;
 
   @override
   void initState() {
     super.initState();
+    _isInitialLoad = true;
+    _isLoadingMore = false;
+    _hasMore = true;
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
         _loadMoreData();
@@ -44,11 +52,26 @@ class _CategoryContentPageState extends State<CategoryContentPage> {
   }
 
   @override
+  void didUpdateWidget(CategoryContentPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _retryInitial();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var view = _articleList != null && _articleList.isNotEmpty
-        ? RefreshIndicator(
+    super.build(context);
+    var view;
+    if (_isInitialLoad) {
+      // 初次加载时显示菊花
+      view = Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (_articleList != null && _articleList.isNotEmpty) {
+      // 加载完成后有数据
+      view = RefreshIndicator(
             onRefresh: _onRefresh,
             child: ListView.builder(
+              physics: AlwaysScrollableScrollPhysics(),
               controller: _scrollController,
               itemBuilder: (context, index) {
                 if (_hasMore && index == _articleList.length) {
@@ -59,14 +82,18 @@ class _CategoryContentPageState extends State<CategoryContentPage> {
               },
               itemCount: _hasMore? _articleList.length + 1 : _articleList.length,
             ),
-          )
-        : Center(
-            child: EmptyDataTips(),
           );
+    } else {
+      // 加载完成后无数据
+      view = Center(
+            child: EmptyDataTips(onTap: _retryInitial,),
+          );
+    }
 
     return view;
   }
 
+  /// 下拉刷新回调
   Future _onRefresh() {
     return _loadFreshData();
   }
@@ -76,14 +103,20 @@ class _CategoryContentPageState extends State<CategoryContentPage> {
     Future<Pair<List<ArticleBean>, bool>> f = Fetcher.fetchCategoryArticles(0, widget.categoryId);
     f.then((pair) {
       _page = 0;
-      _hasMore = pair.second;
-      setState(() {
+      safeSetState(() {
+        _hasMore = !pair.second;
         _articleList = pair.first;
       });
     }).catchError((e) {
       _hasMore = false;
       Fluttertoast.showToast(msg: "$e");
       debugPrint("$e");
+    }).whenComplete(() {
+      if (_isInitialLoad) {
+        safeSetState(() {
+          _isInitialLoad = false;
+        });
+      }
     });
 
     return f;
@@ -91,20 +124,20 @@ class _CategoryContentPageState extends State<CategoryContentPage> {
 
   /// 更多数据
   _loadMoreData() {
-    if (!_isLoading) {
-      _isLoading = true;
+    if (!_isLoadingMore) {
+      _isLoadingMore = true;
 
       Future<Pair<List<ArticleBean>, bool>> f = Fetcher.fetchCategoryArticles(_page+1, widget.categoryId);
       f.then((pair) {
         _page++;
         var list = pair.first;
         if (list == null || list.isEmpty) {
-          setState(() {
+          safeSetState(() {
             _hasMore = false;
           });
           Fluttertoast.showToast(msg: Strings.net_request_no_more_data);
         } else {
-          setState(() {
+          safeSetState(() {
             _hasMore = true;
             _articleList.addAll(list);
           });
@@ -113,7 +146,23 @@ class _CategoryContentPageState extends State<CategoryContentPage> {
         Fluttertoast.showToast(msg: "$e");
         debugPrint("$e");
       }).whenComplete(() {
-        _isLoading = false;
+        _isLoadingMore = false;
+      });
+    }
+  }
+
+  /// 重试加载数据
+  _retryInitial() {
+    setState(() {
+      _isInitialLoad = true;
+    });
+    _loadFreshData();
+  }
+
+  safeSetState(Function action) {
+    if (this.mounted) {
+      setState(() {
+        action();
       });
     }
   }
@@ -123,4 +172,7 @@ class _CategoryContentPageState extends State<CategoryContentPage> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

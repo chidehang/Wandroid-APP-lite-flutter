@@ -19,7 +19,7 @@ class EmptyDataTips extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset("res/images/ic_empty_data.png", width: 45, height: 45,),
+            Image.asset("res/images/ic_empty_data.png", width: 50, height: 50,),
             Padding(
               padding: EdgeInsets.only(top: Dimens.margin_common),
               child: Text(Strings.net_request_no_more_data, style: TextStyle(fontSize: 14, color: AColors.secondary_text_dark),),
