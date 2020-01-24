@@ -14,4 +14,6 @@ class Strings {
   static const article_share_label = "分享:";
   static const article_classify_label = "分类:";
   static const article_date_label = "时间:";
+
+  static const category_picker = "选择分类";
 }
