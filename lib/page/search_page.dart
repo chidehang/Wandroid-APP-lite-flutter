@@ -115,7 +115,7 @@ class _SearchPageState extends State<SearchPage> {
               ],
             ),
             SizedBox(height: Dimens.spacing_item,),
-            Expanded(
+            Flexible(
               child: FutureBuilder<List<SearchKeyBean>>(
                 future: _searchKeyDao.queryAll(),
                 builder: (context, snapshot) {
@@ -138,14 +138,15 @@ class _SearchPageState extends State<SearchPage> {
     return ListView.builder(
       itemCount: data.length,
       itemBuilder: (context, index) {
+        final bean = data[data.length - 1 - index];
         return GestureDetector(
           child: Container(
             padding: EdgeInsets.all(Dimens.margin_common),
             decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: AColors.divider))),
-            child: Text(data[index].name, style: TextStyle(fontSize: 14, color: AColors.secondary_text_dark),),
+            child: Text(bean.name, style: TextStyle(fontSize: 14, color: AColors.secondary_text_dark),),
           ),
           onTap: () {
-            _search(data[index].name);
+            _search(bean.name);
           },
         );
       },
