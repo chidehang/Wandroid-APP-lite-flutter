@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:wandroid_app_flutter/model/bean/article_bean.dart';
 import 'package:wandroid_app_flutter/model/bean/banner_bean.dart';
 import 'package:wandroid_app_flutter/model/bean/category_bean.dart';
+import 'package:wandroid_app_flutter/model/bean/search_key_bean.dart';
 import 'package:wandroid_app_flutter/network/api_exception.dart';
 import 'package:wandroid_app_flutter/network/http_manager.dart';
 import 'dart:convert';
@@ -63,6 +64,35 @@ class Fetcher<T> {
   }
 
   static Pair<List<ArticleBean>, bool> parseCategoryArticles(String source) {
+    final result = json.decode(source);
+    checkResult(result);
+    final parsed = result["data"]["datas"].cast<Map<String, dynamic>>();
+    Pair<List<ArticleBean>, bool> pair = Pair(parsed.map<ArticleBean>((json) => ArticleBean.fromJson(json)).toList(), result["data"]["over"]);
+    return pair;
+  }
+
+  /// 搜索热词
+  static Future<List<SearchKeyBean>> fetchHotKeys() async {
+    final api = "hotkey/json";
+    Response<String> resp = await HttpManager.getInstance().client.get(api);
+    return compute(parseHotKeys, resp.data);
+  }
+
+  static List<SearchKeyBean> parseHotKeys(String source) {
+    final result = json.decode(source);
+    checkResult(result);
+    final parsed = result["data"].cast<Map<String, dynamic>>();
+    return parsed.map<SearchKeyBean>((json) => SearchKeyBean.fromJson(json)).toList();
+  }
+
+  /// 搜索文章列表
+  static Future<Pair<List<ArticleBean>, bool>> fetchSearchArticles(int page, String key) async {
+    final api = "article/query/$page/json";
+    Response<String> resp = await HttpManager.getInstance().client.post(api, queryParameters: {"k": key});
+    return compute(parseSearchArticles, resp.data);
+  }
+
+  static Pair<List<ArticleBean>, bool> parseSearchArticles(String source) {
     final result = json.decode(source);
     checkResult(result);
     final parsed = result["data"]["datas"].cast<Map<String, dynamic>>();

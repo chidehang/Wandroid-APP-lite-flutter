@@ -16,4 +16,9 @@ class Strings {
   static const article_date_label = "时间:";
 
   static const category_picker = "选择分类";
+
+  static const search_input_hint = "请输入搜索关键字";
+  static const search_hot_key = "热门搜索";
+  static const search_history_key = "历史搜索";
+  static const search_clear_keys = "清除记录";
 }

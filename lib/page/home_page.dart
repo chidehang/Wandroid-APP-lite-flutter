@@ -4,6 +4,7 @@ import 'package:wandroid_app_flutter/model/bean/article_bean.dart';
 import 'package:wandroid_app_flutter/model/bean/banner_bean.dart';
 import 'package:wandroid_app_flutter/network/fetcher.dart';
 import 'package:wandroid_app_flutter/page/article_details_page.dart';
+import 'package:wandroid_app_flutter/page/search_page.dart';
 import 'package:wandroid_app_flutter/resource/dimens.dart';
 import 'package:wandroid_app_flutter/resource/selector.dart';
 import 'package:wandroid_app_flutter/resource/strings.dart';
@@ -86,21 +87,26 @@ class _HomePageState extends State<HomePage> {
           child: Image.asset("res/images/ic_droid_thumb.png", width: 32, height: 32,),
         ),
         Expanded(
-          child: Container(
-            margin: EdgeInsets.only(top: Dimens.margin_common, right: Dimens.margin_common, bottom: Dimens.margin_common),
-            decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(25)),
-            child: Padding(
-              padding: EdgeInsets.all(6),
-              child: Row(
-                children: <Widget>[
-                  Image.asset("res/images/ic_search.png", width: 16, height: 16,),
-                  Padding(
-                    padding: const EdgeInsets.only(left: Dimens.margin_common),
-                    child: Text(Strings.home_search_hint, style: TextStyle(fontSize: 16, color: Colors.grey[600]),),
-                  )
-                ],
+          child: GestureDetector(
+            child: Container(
+              margin: EdgeInsets.only(top: Dimens.margin_common, right: Dimens.margin_common, bottom: Dimens.margin_common),
+              decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(25)),
+              child: Padding(
+                padding: EdgeInsets.all(6),
+                child: Row(
+                  children: <Widget>[
+                    Image.asset("res/images/ic_search.png", width: 16, height: 16,),
+                    Padding(
+                      padding: const EdgeInsets.only(left: Dimens.margin_common),
+                      child: Text(Strings.home_search_hint, style: TextStyle(fontSize: 16, color: Colors.grey[600]),),
+                    )
+                  ],
+                ),
               ),
             ),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchPage()));
+            },
           ),
         ),
       ],

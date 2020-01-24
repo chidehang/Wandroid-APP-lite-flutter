@@ -186,6 +186,7 @@ class _CategoryPageState extends State<CategoryPage> with TickerProviderStateMix
     final content = SingleChildScrollView(
       child: Wrap(
         spacing: Dimens.spacing_item,
+        runSpacing: -5,
         children: <Widget>[
           for (int i=0; i<_categoryTree.length; i++)
             ChoiceChip(
