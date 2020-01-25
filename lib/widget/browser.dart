@@ -6,9 +6,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 class Browser extends StatefulWidget {
 
   final String initialUrl;
+
   WebViewController _webViewController;
 
-  Browser(this.initialUrl);
+  Function(String) onReceiveTitle;
+
+  Browser(this.initialUrl, {this.onReceiveTitle});
 
   @override
   State<StatefulWidget> createState() {
@@ -62,6 +65,7 @@ class _BrowserState extends State<Browser> {
             setState(() {
               _isLoading = false;
             });
+            _receiveTitle();
           },
         ),
         _buildProgressView(),
@@ -76,6 +80,15 @@ class _BrowserState extends State<Browser> {
       );
     } else {
       return Container();
+    }
+  }
+
+  /// 获取H5标题
+  _receiveTitle() async {
+    String title = await widget._webViewController.getTitle();
+    debugPrint("_receiveTitle: title=$title");
+    if (title.isNotEmpty) {
+      widget?.onReceiveTitle(title);
     }
   }
 }

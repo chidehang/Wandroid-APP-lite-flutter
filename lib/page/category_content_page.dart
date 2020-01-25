@@ -67,7 +67,7 @@ class CategoryContentPageState extends State<CategoryContentPage> with Automatic
   /// item点击跳转文章详情
   _onItemTapAction<T>(BuildContext context, int index, T item) {
     final bean = item as ArticleBean;
-    PageLauncher.openArticleDetails(context, bean.title, bean.link);
+    PageLauncher.openBrowser(context, bean.link, title: bean.title);
   }
 
   @override

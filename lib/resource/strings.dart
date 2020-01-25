@@ -21,4 +21,14 @@ class Strings {
   static const search_hot_key = "热门搜索";
   static const search_history_key = "历史搜索";
   static const search_clear_keys = "清除记录";
+
+  static const mine_user_name = "欢迎使用";
+  static const mine_favorite_label = "我的收藏";
+  static const mine_setting_label = "设置";
+
+  static const setting_about_me = "关于作者";
+  static const setting_git_link = "源码地址";
+  static const logout_label = "退出登录";
+
+  static const coming_soon = "敬请期待~";
 }

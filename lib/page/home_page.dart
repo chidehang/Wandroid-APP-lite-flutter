@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wandroid_app_flutter/model/bean/article_bean.dart';
 import 'package:wandroid_app_flutter/model/bean/banner_bean.dart';
 import 'package:wandroid_app_flutter/network/fetcher.dart';
-import 'package:wandroid_app_flutter/page/article_details_page.dart';
+import 'package:wandroid_app_flutter/page/browser_page.dart';
 import 'package:wandroid_app_flutter/page/search_page.dart';
 import 'package:wandroid_app_flutter/resource/dimens.dart';
 import 'package:wandroid_app_flutter/resource/selector.dart';
@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
           unselectIndicator: unselectedDot,
           onTap: (index) {
             BannerBean bean = _bannerList[index];
-            PageLauncher.openArticleDetails(context, bean.title, bean.url);
+            PageLauncher.openBrowser(context, bean.url, title: bean.title);
           },
         ),
       ),
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                 return GestureDetector(
                   child: ArticleListTile(bean),
                   onTap: () {
-                    PageLauncher.openArticleDetails(context, bean.title, bean.link);
+                    PageLauncher.openBrowser(context, bean.link, title: bean.title);
                   },
                 );
               },

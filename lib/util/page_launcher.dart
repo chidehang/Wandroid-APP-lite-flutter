@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:wandroid_app_flutter/page/article_details_page.dart';
+import 'package:wandroid_app_flutter/page/browser_page.dart';
 
 class PageLauncher {
-  /// 打开文章详情
-  static Future<T> openArticleDetails<T>(BuildContext context, String title, String url) async {
+  /// 打开内部浏览器
+  static Future<T> openBrowser<T>(BuildContext context, String url, {String title = "..."}) async {
     final result = await Navigator.push(context,
         MaterialPageRoute(builder: (context) {
-          var args = ArticleArguments(title, url);
-          return ArticleDetailsPage(args);
+          var args = WebArguments(url, title: title);
+          return BrowserPage(args);
         })
     );
     return result;
